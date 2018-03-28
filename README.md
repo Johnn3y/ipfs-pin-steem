@@ -1,10 +1,15 @@
 # ipfs-pin-steem - A tool for pinning Dtube/Dsound content to your IPFS node
 
-## Installation
-You can simply install "ipfs-pin-steem" with "pip":
+## Dependencies
+ipfsapi
+steem
 
+## Installation
+To Install with all dependencies
 ```
-pip install ipfs-pin-steem
+git clone https://github.com/Johnn3y/ipfs-pin-steem
+cd ipfs-pin-steem
+python setup.py install
 ```
 
 ## Usage
