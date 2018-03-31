@@ -1,4 +1,8 @@
+[![Build Status](https://travis-ci.org/Johnn3y/ipfs-pin-steem.svg?branch=master)](https://travis-ci.org/Johnn3y/ipfs-pin-steem)
+
+
 # ipfs-pin-steem - A tool for pinning Dtube/Dsound content to your IPFS node
+
 
 ## Dependencies
 ipfsapi
