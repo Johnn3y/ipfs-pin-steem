@@ -12,7 +12,7 @@ class Parser:
 	'''
 	Class for Parser
 	'''		
-	def parseURL(urls):
+	def parseURL(self,urls):
 		'''
 		urls:"[@username/permlink,d.tube/uname2/eiohfs,...]"
 		returns [{'user':'usr11','permlink':'fser909e'},...]

@@ -22,7 +22,8 @@ def main():
 	Get user and permlinks from url argument.
 	'''
 	try:
-		info = Parser.parseURL(args.url)
+		parser=Parser()
+		info = parser.parseURL(urls=args.url)
 	except ValueError:
 		print("Invalid URL. Aborted")
 		exit(0)
