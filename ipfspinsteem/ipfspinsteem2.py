@@ -24,7 +24,9 @@ class Parser:
 			url=url.replace('https://','')
 			url=url.replace('http://','')
 			url=url.replace('d.tube/','')
-			url=url.replace('d.tube/','')
+			url=url.replace('dlive.io/','')
+			url=url.replace('steemit.com/','')
+			url=url.replace('busy.org/','')
 			url=url.replace('dsound.audio/','')
 			url=url.replace('#!/','')
 			url=url.replace('v/','')
@@ -60,36 +62,46 @@ class Steem:
 		ah=[]
 		for l in liste:
 			vidobj3= self.steem.get_content(l[s.user],l[s.permlink])
-			try:
-				vidobj2=vidobj3[s.jsonmd]
-			except TypeError:
-				vidobj2=vidobj3[s.jsonmd]
-
-			try:
-				vidobj2=ast.literal_eval(vidobj2)
-			except ValueError:
-				vidobj2=json.loads(vidobj2)
-			try:#for dsound, dirty solution
-				vidobj=vidobj2[s.video]
-			except KeyError:
-				try:
-					vidobj=vidobj2[s.audio]
-				except KeyError:
-					return None
 
 			retlist=[]
-			for e in s.available:
+			for jsonmdstr in s.available:
 				try:
-					nobj=vidobj[e[s.stroname]]
-					for a in e[s.obj]:
-						zz={}
-						zz[s.Name]=a[s.Name]
-						zz[s.Hash]=nobj[a[s.Name]]
-						if zz[s.Hash] is not None:
-							retlist.append(zz)
+					vidobj2=vidobj3[jsonmdstr]
+				except TypeError:
+					vidobj2=vidobj3[jsonmdstr]
 
-				except KeyError:
-					pass
+				try:
+					vidobj2=ast.literal_eval(vidobj2)
+				except ValueError:
+					vidobj2=json.loads(vidobj2)		
+				for lu in s.available[jsonmdstr]:
+					for q in lu:
+						try:
+							if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
+								if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
+									zz={}
+									zz={s.Name:q,s.Hash:vidobj2[q]}
+									retlist.append(zz)
+						except KeyError:
+							pass
+						try:
+							vidobj10=vidobj2[q]
+							for hu in lu[q]:
+								for t in hu:
+									vidobj11=vidobj10[t]
+									for lili in hu[t]:
+										try:
+											zz={}
+											zz[s.Name]=lili
+											zz[s.Hash]=vidobj11[lili]
+											if zz[s.Hash] is not None:
+												retlist.append(zz)
+										except KeyError:
+											pass
+						except KeyError:
+							pass
+		
+			
 			h.append({s.user:l[s.user],s.permlink:l[s.permlink],s.links:retlist})
 			
 			try:
