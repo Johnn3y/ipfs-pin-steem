@@ -1,5 +1,5 @@
 import ast,ipfsapi,json
-from steem.steemd import Steemd
+from beem.comment import Comment as C
 import ipfspinsteem.strings as s
 import io
 
@@ -46,7 +46,7 @@ class Steem:
 			steemd_nodes = [
     	"https://api.steemit.com",
 	]
-		self.steem = Steemd(nodes=steemd_nodes)	
+		#self.steem = C()
 		
 	def getHashesByContentList(self,liste):
 		'''
@@ -61,21 +61,13 @@ class Steem:
 		j={}
 		ah=[]
 		for l in liste:
-			vidobj3= self.steem.get_content(l[s.user],l[s.permlink])
-
+			identifier='@'+l[s.user]+'/'+l[s.permlink]
+			vidobj2= C(authorperm=identifier).json_metadata
 			retlist=[]
-			for jsonmdstr in s.available:
-				try:
-					vidobj2=vidobj3[jsonmdstr]
-				except TypeError:
-					vidobj2=vidobj3[jsonmdstr]
-
-				try:
-					vidobj2=ast.literal_eval(vidobj2)
-				except ValueError:
-					vidobj2=json.loads(vidobj2)		
+			for jsonmdstr in s.available:	
 				for lu in s.available[jsonmdstr]:
 					for q in lu:
+						vidobj2=C(authorperm=identifier).json_metadata
 						try:
 							if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
 								if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
