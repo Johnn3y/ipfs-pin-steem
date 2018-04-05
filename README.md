@@ -9,7 +9,12 @@ ipfsapi
 steem
 
 ## Installation
-To Install with all dependencies
+Install with pip
+```
+pip install ipfs-pin-steem
+```
+
+or build from source
 ```
 git clone https://github.com/Johnn3y/ipfs-pin-steem
 cd ipfs-pin-steem
