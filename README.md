@@ -1,12 +1,15 @@
 [![Build Status](https://travis-ci.org/Johnn3y/ipfs-pin-steem.svg?branch=master)](https://travis-ci.org/Johnn3y/ipfs-pin-steem)
 
 
-# ipfs-pin-steem - A tool for pinning Dtube/Dsound content to your IPFS node
+# ipfs-pin-steem
+
+> A tool for pinning Steem content from Dtube,Dlive,Dsound,Steepshot to your IPFS node.
 
 
-## Dependencies
-ipfsapi
-steem
+## Requirements
+* python3.6
+* ipfsapi
+* beem
 
 ## Installation
 Install with pip
@@ -22,33 +25,43 @@ python setup.py install
 ```
 
 ## Usage
-cli-Knowledge required. Run "ipfs-pin-steem --help" for more details. To simply pin a post run:
+cli-Knowledge required. Run `ipfs-pin-steem --help` for more details. 
+
+`url` can look e.g. like `https://d.tube/v/user/permlink` or just `user/permlink`.
+
+
+To simply pin a post run:
 
 ```
-ipfs-pin-steem d.tube/v/user/permlink
+ipfs-pin-steem url
 ```
-
-to wrap all hashes to a single ipfs object, run:
-
-```
-ipfs-pin-steem d.tube/v/user/permlink --object
-```
-If you don't want to pin e.g snaphash and spritehash, simply run:
+To pin multiple posts:
 
 ```
-ipfs-pin-steem d.tube/v/user/permlink --exclude snaphash spritehash
+ipfs-pin-steem url1 url2 url3
+```
+
+To wrap all hashes to a single ipfs object, run:
+
+```
+ipfs-pin-steem url --object
+```
+
+If you don't want to pin e.g. snaphash and spritehash, simply run:
+
+```
+ipfs-pin-steem url --exclude snaphash spritehash
 ```
 
 If you don't want to pin anything and just create the object, run:
 
 ```
-ipfs-pin-steem d.tube/v/user/permlink --object --no-pin
+ipfs-pin-steem url --object --no-pin
 ```
 
 
-If your IPFS Node is not on your local Machine or you changed the port, you can simply run:
+If your IPFS Node is not on your local machine or you changed the port, you can simply run:
 
 ```
-ipfs-pin-steem d.tube/v/user/permlink --api 127.0.0.1 --port 5001
+ipfs-pin-steem url --api 127.0.0.1 --port 5001
 ```
-Run "ipfs-pin-steem --help" for more details.  s. 
