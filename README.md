@@ -7,17 +7,27 @@
 
 
 ## Requirements
-* python3.6
-* ipfsapi
-* beem
+* `python3.6`
+* `ipfsapi`
+* `beem`(optional)
+* `steem`(optional)
 
 ## Installation
-Install with pip
+Install with pip.
+It's recommended to install a steem library (`beem` or `steem`), but not required since it's not easy to install them on Windows.
+
 ```
 pip install ipfs-pin-steem
 ```
 
+or (recommended)
+
+`pip install ipfs-pin-steem[beem]` or 
+
+`pip install ipfs-pin-steem[steem]`
+
 or build from source
+
 ```
 git clone https://github.com/Johnn3y/ipfs-pin-steem
 cd ipfs-pin-steem
@@ -64,4 +74,5 @@ If your IPFS Node is not on your local machine or you changed the port, you can 
 
 ```
 ipfs-pin-steem url --api 127.0.0.1 --port 5001
+```01
 ```

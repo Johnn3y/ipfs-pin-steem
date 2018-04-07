@@ -21,7 +21,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='ipfs-pin-steem',  # Required
-    version='1.0.4',  # Required
+    version='1.0.5',  # Required
     description='Creates an object of all Hashes given from a dtube/dsound/slive URL and pins it to an IPFS Node',  # Required
     license='Unlicensed',
     classifiers=[
@@ -37,7 +37,11 @@ setup(
     ],
     keywords='ipfs steem dtube dsound dlive',  # Optional
     packages=['ipfspinsteem'],#find_packages('ipfspinsteem'),  # Required
-    install_requires=['ipfsapi','beem'],
+    install_requires=['ipfsapi'],
+    extras_require={
+    'steem':['steem'],
+    'beem':['beem']
+    },
 
     #package_data={  # Optional
     #    'ipfs-pin-steem': ['package_data.dat'],

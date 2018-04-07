@@ -1,5 +1,15 @@
 import ast,ipfsapi,json
-from beem.comment import Comment as C
+
+try:
+	from beem.comment import Comment as C
+	from beem.exceptions import ContentDoesNotExistsException
+except ImportError:
+	try:
+		from steem.steemd import Steemd as S	
+	except ImportError:	
+		pass
+import requests
+import random
 import ipfspinsteem.strings as s
 import io
 
@@ -46,7 +56,34 @@ class Steem:
 			steemd_nodes = [
     	"https://api.steemit.com",
 	]
+		try:
+			self.steem = S(steemd_nodes)
+		except NameError:
+			pass
 		#self.steem = C()
+	
+	def getContentJSON(self,account,permlink):
+		try:
+			data=self.steem.get_content(account,permlink)
+			data=data['json_metadata']
+			try:
+				obj=ast.literal_eval(data)
+			except ValueError:
+				obj=json.loads(data)
+			return obj
+
+		except (NameError,AttributeError):
+			try:
+				return C(authorperm='@'+account+'/'+permlink).json_metadata
+			except:
+				#response=urllib.request.urlopen("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink)
+				r=requests.get("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink+'.json')
+				data = r.json()
+				data=data['post']
+				data=data['json_metadata']
+				return data
+				
+			
 		
 	def getHashesByContentList(self,liste):
 		'''
@@ -62,12 +99,13 @@ class Steem:
 		ah=[]
 		for l in liste:
 			identifier='@'+l[s.user]+'/'+l[s.permlink]
-			vidobj2= C(authorperm=identifier).json_metadata
+			#vidobj2= C(authorperm=identifier).json_metadata
+			#vidobj2= self.getContentJSON(l[s.user],l[s.permlink])
 			retlist=[]
 			for jsonmdstr in s.available:	
 				for lu in s.available[jsonmdstr]:
 					for q in lu:
-						vidobj2=C(authorperm=identifier).json_metadata
+						vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
 						try:
 							if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
 								if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
