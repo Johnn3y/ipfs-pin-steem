@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Johnn3y/ipfs-pin-steem.svg?branch=master)](https://travis-ci.org/Johnn3y/ipfs-pin-steem)
+[![Build Status](https://travis-ci.org/Johnn3y/ipfs-pin-steem.svg?branch=steem)](https://travis-ci.org/Johnn3y/ipfs-pin-steem)
 
 
 # ipfs-pin-steem
@@ -74,5 +74,4 @@ If your IPFS Node is not on your local machine or you changed the port, you can 
 
 ```
 ipfs-pin-steem url --api 127.0.0.1 --port 5001
-```01
 ```
