@@ -100,12 +100,12 @@ class Steem:
 		for l in liste:
 			identifier='@'+l[s.user]+'/'+l[s.permlink]
 			#vidobj2= C(authorperm=identifier).json_metadata
-			#vidobj2= self.getContentJSON(l[s.user],l[s.permlink])
+			vidobj2= self.getContentJSON(l[s.user],l[s.permlink])
 			retlist=[]
 			for jsonmdstr in s.available:	
 				for lu in s.available[jsonmdstr]:
 					for q in lu:
-						vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
+						#vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
 						try:
 							if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
 								if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
