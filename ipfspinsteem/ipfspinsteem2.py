@@ -2,6 +2,7 @@ import ast,ipfsapi,json
 
 try:
 	from beem.comment import Comment as C
+	from beem.account import Account as A
 	from beem.exceptions import ContentDoesNotExistsException
 except ImportError:
 	try:
@@ -41,9 +42,12 @@ class Parser:
 			url=url.replace('#!/','')
 			url=url.replace('v/','')
 			url=url.replace('@','')
-			
-			a,b=url.split('/')
-			liste.append({s.user:a,s.permlink:b})
+			try:
+				a,b=url.split('/')
+				liste.append({s.user:a,s.permlink:b})
+			except ValueError:
+				liste.append({s.user:url,s.permlink:None})
+
 		return liste
 
 
@@ -62,26 +66,37 @@ class Steem:
 			pass
 		#self.steem = C()
 	
-	def getContentJSON(self,account,permlink):
-		try:
-			data=self.steem.get_content(account,permlink)
-			data=data['json_metadata']
+	def getContentJSON(self,account,permlink):#returns list
+		liste=[]
+		if permlink is None:
+			comment =A(account).get_blog()
+			for c in comment:
+				liste.append(c.json_metadata)
+			return liste
+		else:
 			try:
-				obj=ast.literal_eval(data)
-			except ValueError:
-				obj=json.loads(data)
-			return obj
-
-		except (NameError,AttributeError):
-			try:
-				return C(authorperm='@'+account+'/'+permlink).json_metadata
-			except:
-				#response=urllib.request.urlopen("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink)
-				r=requests.get("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink+'.json')
-				data = r.json()
-				data=data['post']
+				data=self.steem.get_content(account,permlink)
 				data=data['json_metadata']
-				return data
+				obj=None
+				try:
+					obj=ast.literal_eval(data)
+				except ValueError:
+					obj=json.loads(data)
+				liste.append(obj)
+				return liste
+
+			except (NameError,AttributeError):
+				try:
+					liste.append(C(authorperm='@'+account+'/'+permlink).json_metadata)
+					return liste
+				except:
+					#response=urllib.request.urlopen("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink)
+					r=requests.get("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink+'.json')
+					data = r.json()
+					data=data['post']
+					data=data['json_metadata']
+					data.append(liste)
+					return liste
 				
 			
 		
@@ -98,41 +113,43 @@ class Steem:
 		j={}
 		ah=[]
 		for l in liste:
-			identifier='@'+l[s.user]+'/'+l[s.permlink]
+			#identifier='@'+l[s.user]+'/'+l[s.permlink]
 			#vidobj2= C(authorperm=identifier).json_metadata
-			vidobj2= self.getContentJSON(l[s.user],l[s.permlink])
+			
+			vidobj22= self.getContentJSON(l[s.user],l[s.permlink])
 			retlist=[]
-			for jsonmdstr in s.available:	
-				for lu in s.available[jsonmdstr]:
-					for q in lu:
-						#vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
-						try:
-							if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
-								if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
-									zz={}
-									zz={s.Name:q,s.Hash:vidobj2[q]}
-									retlist.append(zz)
-						except KeyError:
-							pass
-						try:
-							vidobj10=vidobj2[q]
-							for hu in lu[q]:
-								for t in hu:
-									vidobj11=vidobj10[t]
-									for lili in hu[t]:
-										try:
-											zz={}
-											zz[s.Name]=lili
-											zz[s.Hash]=vidobj11[lili]
-											if zz[s.Hash] is not None:
-												retlist.append(zz)
-										except KeyError:
-											pass
-						except KeyError:
-							pass
+			for vidobj2 in vidobj22:
+				for jsonmdstr in s.available:	
+					for lu in s.available[jsonmdstr]:
+						for q in lu:
+							#vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
+							try:
+								if(vidobj2[q] is not None):#Implicit for DLive/Steepshot
+									if(vidobj2[q][0]=='Q' and vidobj2[q][1]=='m' and len(vidobj2[q])==46):
+										zz={}
+										zz={s.Name:q,s.Hash:vidobj2[q]}
+										retlist.append(zz)
+							except KeyError:
+								pass
+							try:
+								vidobj10=vidobj2[q]
+								for hu in lu[q]:
+									for t in hu:
+										vidobj11=vidobj10[t]
+										for lili in hu[t]:
+											try:
+												zz={}
+												zz[s.Name]=lili
+												zz[s.Hash]=vidobj11[lili]
+												if zz[s.Hash] is not None:
+													retlist.append(zz)
+											except KeyError:
+												pass
+							except KeyError:
+								pass
 		
 			
-			h.append({s.user:l[s.user],s.permlink:l[s.permlink],s.links:retlist})
+				h.append({s.user:l[s.user],s.permlink:l[s.permlink],s.links:retlist})
 			
 			try:
 				j[l[s.user]].append({s.permlink:l[s.permlink],s.links:retlist})
