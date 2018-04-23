@@ -50,7 +50,10 @@ To pin multiple posts:
 ```
 ipfs-pin-steem url1 url2 url3
 ```
-
+To pin all posts from an account (`beem` required):
+```
+ipfs-pin-steem user
+```
 To wrap all hashes to a single ipfs object, run:
 
 ```
