@@ -12,12 +12,6 @@ except ImportError:
 import requests
 import random
 import ipfspinsteem.strings as s
-import io
-
-#strhash='Hash'
-
-#struser='user'
-#strp='permlink'
 
 class Parser:
 	'''
@@ -41,6 +35,7 @@ class Parser:
 			url=url.replace('dsound.audio/','')
 			url=url.replace('#!/','')
 			url=url.replace('v/','')
+			url=url.replace('c/','')
 			url=url.replace('@','')
 			try:
 				a,b=url.split('/')
@@ -71,8 +66,7 @@ class Steem:
 		if permlink is None:
 			comment =A(account).get_blog()
 			for c in comment:
-				liste.append(c.json_metadata)
-			return liste
+				liste.append({'json_metadata':c.json_metadata,'permlink':c.permlink})
 		else:
 			try:
 				data=self.steem.get_content(account,permlink)
@@ -82,21 +76,19 @@ class Steem:
 					obj=ast.literal_eval(data)
 				except ValueError:
 					obj=json.loads(data)
-				liste.append(obj)
-				return liste
+				liste.append({'json_metadata':obj,'permlink':permlink})
 
 			except (NameError,AttributeError):
 				try:
-					liste.append(C(authorperm='@'+account+'/'+permlink).json_metadata)
-					return liste
+					liste.append({'json_metadata':C(authorperm='@'+account+'/'+permlink).json_metadata,'permlink':permlink})
 				except:
 					#response=urllib.request.urlopen("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink)
 					r=requests.get("https://steemit.com/"+random.choice('abcdef')+"/@"+account+'/'+permlink+'.json')
 					data = r.json()
 					data=data['post']
 					data=data['json_metadata']
-					data.append(liste)
-					return liste
+					liste.append({'json_metadata':data,'permlink':permlink})
+		return liste
 				
 			
 		
@@ -109,17 +101,20 @@ class Steem:
 		returns None if no hashes were found
 		'''
 
-		h=[]
+
 		j={}
-		ah=[]
+
 		for l in liste:
 			#identifier='@'+l[s.user]+'/'+l[s.permlink]
 			#vidobj2= C(authorperm=identifier).json_metadata
-			
+
 			vidobj22= self.getContentJSON(l[s.user],l[s.permlink])
-			retlist=[]
 			for vidobj2 in vidobj22:
+		
+				pl=vidobj2[s.permlink]
+				vidobj2=vidobj2['json_metadata']
 				for jsonmdstr in s.available:	
+					retlist=[]
 					for lu in s.available[jsonmdstr]:
 						for q in lu:
 							#vidobj2=self.getContentJSON(l[s.user],l[s.permlink])
@@ -147,15 +142,12 @@ class Steem:
 												pass
 							except KeyError:
 								pass
-		
-			
-				h.append({s.user:l[s.user],s.permlink:l[s.permlink],s.links:retlist})
-			
-			try:
-				j[l[s.user]].append({s.permlink:l[s.permlink],s.links:retlist})
-			except KeyError:
-				j[l[s.user]]=[]
-				j[l[s.user]].append({s.permlink:l[s.permlink],s.links:retlist})
+				
+				try:
+					j[l[s.user]].append({s.permlink:pl,s.links:retlist})
+				except KeyError:
+					j[l[s.user]]=[]
+					j[l[s.user]].append({s.permlink:pl,s.links:retlist})
 		ka=liste
 		endl=[]
 		for a,b in j.items():
@@ -167,7 +159,7 @@ class Steem:
 		return endl
 		
 		
-	def removeInvalid(liste,opts):#some redundat code
+	def removeInvalid(liste,opts):
 		for users in liste:			
 			for permlinks in users[s.permlinks]:
 				for element in permlinks:
@@ -255,4 +247,3 @@ class IPFS:
 			for e in l[s.permlinks]:
 				for p in e[s.links]:
 					self.api.pin_add(p[s.Hash])
-

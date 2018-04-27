@@ -51,8 +51,6 @@ def main():
 	#print(ipfs.parseHash("QmbWPdc526RQxMVijVNQEyvz6s1Mh5hT3r4CZ4xhUh6xZk","QmbWPdc526RQxMVijVNQEyvz6s1Mh5hT3r4CZ4xhUh6xZk"))
 	#objopts={s.donotadd:args.exclude}#Object creation options
 	liste=[]
-	
-
 	for h in hashes:
 		for e in h[s.permlinks]:
 			for q in e:
