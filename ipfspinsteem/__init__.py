@@ -1,11 +1,10 @@
 import argparse,ipfspinsteem.strings as s
 from ipfspinsteem.ipfspinsteem2 import Steem,Parser,IPFS
-import ipfsapi
+import ipfshttpclient
 
 parser = argparse.ArgumentParser(description='Extracts IPFS Hashes to Dtube/Dsound, creates an IPFS Object and pins it to an IPFS node.')
 parser.add_argument('url', type=str, nargs='+',help='Dtube Video-Url. Example: account/permlink')
-parser.add_argument('--api', dest='api', default='127.0.0.1',help='IPFS API IP. Default:127.0.0.1')
-parser.add_argument('--port', dest='port',type=int,default=5001,help='API Port. Default:5001')
+parser.add_argument('--api', dest='api', default='/ip4/127.0.0.1/tcp/5001/http',help='IPFS API IP. Default:/ip4/127.0.0.1/tcp/5001/http')
 parser.add_argument('--exclude', dest='exclude', nargs='+',help='Exclude something. Example: videohash')
 parser.add_argument('--object', dest='object',action='store_true',help='Will wrap all hashes to a single IPFS Object.')
 parser.add_argument('--no-pin', dest='nopin',action='store_true',help='Will not pin anything to IPFS')
@@ -16,7 +15,7 @@ def main():
 	'''
 	Connect to IPFS and Steem api.
 	'''
-	ipfs=IPFS(args.api,args.port)
+	ipfs=IPFS(args.api)
 	steem=Steem(steemd_nodes=None)
 	'''
 	Get user and permlinks from url argument.
@@ -87,7 +86,7 @@ def main():
 			else:
 				for i in liste:
 					print(i)
-		except ipfsapi.exceptions.DecodingError as e:
+		except ipfshttpclient.exceptions.DecodingError as e:
 			print('pinning failed')
 			print(e)
 		except KeyboardInterrupt:

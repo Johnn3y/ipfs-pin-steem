@@ -37,7 +37,7 @@ setup(
     ],
     keywords='ipfs steem dtube dsound dlive',  # Optional
     packages=['ipfspinsteem'],#find_packages('ipfspinsteem'),  # Required
-    install_requires=['ipfsapi'],
+    install_requires=['ipfshttpclient'],
     extras_require={
     'steem':['steem'],
     'beem':['beem']

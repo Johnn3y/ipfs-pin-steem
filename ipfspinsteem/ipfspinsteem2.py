@@ -1,4 +1,4 @@
-import ast,ipfsapi,json
+import ast,ipfshttpclient,json
 
 try:
 	from beem.comment import Comment as C
@@ -195,8 +195,8 @@ class IPFS:
 	'''
 	Class for IPFS related stuff.
 	'''
-	def __init__(self,api2,port):
-		self.api=ipfsapi.connect(api2,port)
+	def __init__(self,api2):
+		self.api=ipfshttpclient.connect(api2)
 		#self.aipfs=i(api2,port)
 
 	def createNewSingleObject(self,liste):
@@ -233,17 +233,17 @@ class IPFS:
 			targethash='QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'#Ugly
 		res={s.Hash:targethash}
 		for row in hashlist:
-			res=self.api.object_patch_add_link(res[s.Hash],row[s.Name],row[s.Hash])
+			res=self.api.object.patch.add_link(res[s.Hash],row[s.Name],row[s.Hash])
 
 		return res[s.Hash]
 
 		
 	def pin(self,hashes):
 		for h in hashes:
-			self.api.pin_add(h)
+			self.api.pin.add(h)
 
 	def pinList(self,liste):#Pins the list what Steem.getHashesByContentList returns
 		for l in liste:
 			for e in l[s.permlinks]:
 				for p in e[s.links]:
-					self.api.pin_add(p[s.Hash])
+					self.api.pin.add(p[s.Hash])
